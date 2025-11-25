@@ -2,4 +2,109 @@
 目前我缩减到的递归我愿意将其分为两大种：
 一、“剥菜型”。即正向思维，层层处理。经典例子：快速排列，n的全排列（只是多了要回溯维护哈希表的一步）。这类递归都是正向思维，一步一步或分治将大化小或从n位到n+1位。
 二、“打包型”。即将子问题打包为整体，只考虑有n-1到n的过程。经典例子是汉诺塔问题和归并排序。不难注意到，这类递归非常像高中数学的数列递推表达式。因为都是“打包思想”嘛。
-OK，等我继续积累再看看有没有其他递归类型。
+希望有大佬补充，不胜感激！
+
+#include<stdio.h>
+#include<stdlib.h>
+void print(int n, int *a, int depth);
+int not_used(int n, int *a, int depth);
+void merge(int arr[], int left, int mid, int right);
+void mergesort(int arr[], int left, int right);
+int main(){
+return 0;
+}
+void print(int n, int *a, int depth){
+    int count =0;
+    if(depth == n){                    
+        for(int i = 0;i<n;i++){
+            printf("%d", a[i]);
+            count++;
+            if(count%n == 0)printf("\n");
+        }
+    }else{
+        for(int j = 1;j<=n;j++){
+            if(not_used(j,a,depth) == 1){
+            a[depth] = j;
+            print(n, a, depth+1);          
+            }
+        }
+        }
+}
+ 
+int not_used(int n, int *a,int depth){
+    for(int i = 0;i<depth;i++){
+        if(a[i] == n)return 0;
+    }
+    return 1;
+}
+ 
+void quicksort(int *a, int left, int right, int n){
+    if(left>=right)return;                            
+ 
+    int pivot = a[(left+right)/2];          
+        int i = left, j = right;
+    while(i<=j){
+        while (a[i]<pivot)i++;
+        while (a[j]>pivot)j--;
+        if(i<=j){
+            int temp = a[i];
+            a[i] = a[j];
+            a[j] = temp;
+            i++;                   
+            j--;
+        }
+    }
+        quicksort(a,left,j,n);      
+        quicksort(a,i,right,n);
+    
+}
+ 
+void mergesort(int arr[], int left, int right){
+    if(left>=right){
+        return;
+    }else{
+        int mid = left + (right - left) / 2;
+        mergesort(arr,left,mid);
+        mergesort(arr,mid+1,right);
+        merge(arr, left, mid, right);
+    }
+}
+ 
+void merge(int arr[], int left, int mid, int right){ 
+int n1 = mid - left + 1;
+int n2 = right - mid;
+int *L = (int *)malloc(n1*sizeof(int));
+int *R = (int *)malloc(n2*sizeof(int));
+int i; 
+for(i = 0;i<n1;i++){
+    L[i] = arr[left+i];
+}
+for(i = 0;i<n2;i++){
+    R[i] = arr[mid+1+i];
+}
+int j = 0;
+i = 0;
+int k = left;
+while(i<n1&&j<n2){
+    if(L[i]<=R[j]){
+        arr[k] = L[i];
+        i++;
+    }else{
+        arr[k] = R[j];
+        j++;
+    }
+    k++;
+}
+while(i<n1){
+    arr[k] = L[i];
+    i++;
+    k++;
+}
+while(j<n2){
+    arr[k] = R[j];
+    j++;
+    k++;
+}
+free(L);
+free(R);
+}
